@@ -1,0 +1,8 @@
+# MySQL のデータベースディレクトリ
+docker/mysql/data/
+
+# Laravel キャッシュ・ログ
+vendor/
+node_modules/
+.env
+/storage/*.key

@@ -1,0 +1,60 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f8f8f8;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+.wrapper {
+    position: relative;
+    width: 90%;
+    height: 60vh;
+    text-align: center;
+}
+
+/* 背景テキスト */
+.back-text {
+    position: absolute;
+    top: 0%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 230px;
+    /* 幅の約9割 */
+    color: rgba(0, 0, 0, 0.01);
+    font-weight: 500;
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* 前面テキストを少し下げて "n" と重ねる */
+h1 {
+    position: absolute;
+    top: 50%;
+    /* 親の高さの50% */
+    left: 50%;
+    /* 横中央 */
+    transform: translate(-50%, -50%);
+    /* 自分自身の幅と高さの半分だけずらす */
+    z-index: 1;
+    font-size: 20px;
+    color: #725b5b;
+    letter-spacing: 1px;
+    margin: 0;
+    /* 余白をリセット */
+}
+
+
+
+
+.home-btn {
+    display: inline-block;
+    padding: 12px 36px;
+    background-color: #725b5b;
+    color: white;
+    text-decoration: none;
+    margin-top: 20%;
+}

@@ -1,6 +1,4 @@
-h2 {
-    text-align: center;
-}
+
 
 .label_required {
     color: red;
@@ -18,7 +16,6 @@ h2 {
 .form>div {
     display: flex;
     margin-bottom: 20px;
-
 }
 
 .form_group {
@@ -31,7 +28,7 @@ h2 {
 
 input,
 select {
-    height: 30px;
+    height: 40px;
     color: #8b7969;
 }
 
@@ -43,7 +40,7 @@ input[name="first-name"] {
 }
 
 ::placeholder{
-        color: #8b7969;
+    color: #8b7969;
 }
 
 .gender3 {
@@ -96,3 +93,16 @@ textarea {
     margin-top: 50px;
 }
 
+.form_error{
+    color: red;
+    margin-left: 40%;
+}
+
+.form_error_name{
+    display: flex;
+    gap:100px;
+}
+
+.form_error_name>div {
+        width: 200px;
+}

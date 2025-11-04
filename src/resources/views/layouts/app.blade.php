@@ -10,7 +10,14 @@
     <title>FashionablyLate</title>
 </head>
 <body>
-    <header>FashionablyLate</header>
+    <header>
+            <div class="header_logo">FashionablyLate</div>
+            @hasSection('header-button')
+            <div class="header_button">
+                @yield('header-button')
+            </div>
+            @endif
+    </header>
 
     <main>
     @yield('content')

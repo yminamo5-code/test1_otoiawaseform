@@ -5,18 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Contact;
 use App\Models\Category; 
+use App\Http\Requests\ContactRequest;
+
 
 class ContactController extends Controller
 {
     public function index(Request $request)
         {
             $categories = Category::all();
-            // セッションに保存されている入力値を取得
             $oldInput = $request->session()->get('contact_input', []);
             return view('index',compact('categories','oldInput'));
         }
 
-    public function confirm(Request $request)
+    public function confirm(ContactRequest $request)
         {
             $contact=$request->only(['last-name','first-name','gender','email','tel1','tel2','tel3','address','build','category_id','content']);
 
@@ -50,5 +51,34 @@ class ContactController extends Controller
                 'category_id' => $contact['category_id'],
             ]);
             return view('thanks');
+
+
+        }
+
+    public function admin(Request $request)
+        {
+                $query = Contact::query();
+
+            if ($request->name_email !== null && $request->name_email !== '') {
+                $query->where(function($q) use ($request) {
+                    $q->where('first_name', 'like', '%'.$request->name_email.'%')
+                      ->orWhere('last_name', 'like', '%'.$request->name_email.'%')
+                      ->orWhere('email', 'like', '%'.$request->name_email.'%');
+                });
+            }
+
+            if ($request->gender !== null && $request->gender !== '') {
+                $query->where('gender', (int)$request->gender);
+            }
+
+            if ($request->category_id !== null && $request->category_id !== '') {
+                $query->where('category_id', $request->category_id);
+            }
+
+            if ($request->date !== null && $request->date !== '') {
+                $query->whereDate('created_at', $request->date);
+            }
+            $contacts = $query->paginate(7)->appends($request->all());
+            return view('admin', compact('contacts'));
         }
 }

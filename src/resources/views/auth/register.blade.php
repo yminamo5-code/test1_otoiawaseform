@@ -10,7 +10,7 @@
 
 @section('content')
 <div class="page-wrapper">
-            <h2>Resister</h2>
+            <h2>Register</h2>
 
     <form class="form" action="{{ route('register') }}" method="POST">
     @csrf

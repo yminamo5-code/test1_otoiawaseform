@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Contact;
 use App\Models\Category; 
 use App\Http\Requests\ContactRequest;
-
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ContactController extends Controller
 {
@@ -81,4 +83,117 @@ class ContactController extends Controller
             $contacts = $query->paginate(7)->appends($request->all());
             return view('admin', compact('contacts'));
         }
+
+    public function destroy($id)
+        {
+            $contact = \App\Models\Contact::findOrFail($id);
+            $contact->delete();
+
+            return redirect()->route('contacts.admin')->with('success', '削除しました');
+        }
+
+public function export(Request $request)
+{
+    $query = Contact::query();
+
+    if ($request->filled('name_email')) {
+        $v = $request->name_email;
+        $query->where(function($q) use ($v) {
+            $q->where('first_name', 'like', "%{$v}%")
+              ->orWhere('last_name', 'like', "%{$v}%")
+              ->orWhere('email', 'like', "%{$v}%");
+        });
+    }
+    if ($request->filled('gender')) {
+        $query->where('gender', $request->gender);
+    }
+    if ($request->filled('category_id')) {
+        $query->where('category_id', $request->category_id);
+    }
+    if ($request->filled('date')) {
+        $query->whereDate('created_at', $request->date);
+    }
+
+    $contacts = $query->with('category')->get();
+
+    $headers = [
+        'お名前',
+        '性別',
+        'メールアドレス',
+        '電話番号',
+        '住所',
+        '建物名',
+        'お問い合わせの種類',
+        'お問い合わせ内容',
+        '登録日時',
+    ];
+
+    $filename = 'contacts_' . now()->format('Ymd_His') . '.csv';
+    $handle = fopen('php://temp', 'r+');
+
+    fputcsv($handle, array_map(fn($h) => mb_convert_encoding($h, 'SJIS-win', 'UTF-8'), $headers));
+
+    foreach ($contacts as $c) {
+        $gender = match($c->gender) {
+            1 => '男性',
+            2 => '女性',
+            3 => 'その他',
+            default => '',
+        };
+
+        $row = [
+            $c->last_name . ' ' . $c->first_name,
+            $gender,
+            $c->email,
+            $c->tel,
+            $c->address,
+            $c->building,
+            $c->category->name ?? '不明',
+            $c->detail,
+            $c->created_at->format('Y-m-d H:i:s'),
+        ];
+
+        fputcsv($handle, array_map(fn($v) => mb_convert_encoding((string)$v, 'SJIS-win', 'UTF-8'), $row));
+    }
+
+    rewind($handle);
+    $csv = stream_get_contents($handle);
+    fclose($handle);
+
+    return Response::make($csv, 200, [
+        'Content-Type' => 'text/csv; charset=Shift_JIS',
+        'Content-Disposition' => "attachment; filename={$filename}",
+    ]);
+}
+
+    public function exportShiftJIS(Request $request)
+    {
+        $query = Contact::query();
+        $contacts = $query->get();
+        $columns = Schema::getColumnListing('contacts');
+
+        $filename = 'contacts_' . now()->format('Ymd_His') . '.csv';
+        $handle = fopen('php://temp', 'r+');
+
+        $header = array_map(function($h){ return mb_convert_encoding($h, 'SJIS-win', 'UTF-8'); }, $columns);
+        fputcsv($handle, $header);
+
+        foreach ($contacts as $c) {
+            $row = [];
+            foreach ($columns as $col) {
+                $val = $c->{$col};
+                $row[] = mb_convert_encoding((string)$val, 'SJIS-win', 'UTF-8');
+            }
+            fputcsv($handle, $row);
+        }
+
+        rewind($handle);
+        $csv = stream_get_contents($handle);
+        fclose($handle);
+
+        return Response::make($csv, 200, [
+            'Content-Type' => 'text/csv; charset=Shift_JIS',
+            'Content-Disposition' => "attachment; filename={$filename}",
+        ]);
+    }
 }

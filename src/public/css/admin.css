@@ -132,3 +132,111 @@ table tr{
     background-color: #fff;
     padding: 5px 10px;
 }
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    /* デフォルト非表示 */
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+}
+
+/* チェックが入った時だけモーダル表示 */
+.modal-toggle:checked+.modal {
+    display: flex;
+}
+
+/* オーバーレイクリックで閉じる */
+.modal-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+/* コンテンツ */
+.modal-content {
+    position: relative;
+    background: #fff;
+    padding:5% 0;
+    /* 上下のみ余白、左右はp要素で管理 */
+    width: 60%;
+    max-height: 100%;
+    overflow-y: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 101;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.modal-content p {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    margin: 8px 0;
+    padding: 0;
+}
+
+.modal-content p::before,
+.modal-content p::after {
+    content: "";
+    flex: 0 0 5%;
+}
+
+/* 項目名 */
+.modal-content p strong {
+    flex: 0 0 25%;
+    /* 5%余白の後なので合計40%位置 */
+    text-align: left;
+    font-weight: bold;
+}
+
+/* 内容部分 */
+.modal-content p span,
+.modal-content p .value {
+    flex: 0 0 65%;
+    /* ～95% の範囲 */
+    text-align: left;
+}
+
+.close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    border: 2px solid #aaa;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+    text-align: center;
+}
+
+/* 削除ボタン */
+.delete {
+    display: block;
+    width: 10%;
+    background-color: #c46a6a;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    margin: 10% auto 0 auto;
+}
+
+.show {
+    border: 1px solid #e6e4e4;
+    color: #b3a79b;
+    background-color: #fff;
+    padding: 5px 10px;
+    cursor: pointer;
+}

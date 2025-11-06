@@ -10,9 +10,9 @@
 
 @section('content')
 <div class="page-wrapper">
-            <h2>Resister</h2>
+            <h2>Login</h2>
 
-    <form class="form" action="{{ route('register') }}" method="POST">
+    <form class="form" action="{{ route('login') }}" method="POST">
     @csrf
     <div class="register-box">
     <div class=label>

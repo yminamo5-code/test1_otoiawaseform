@@ -2,7 +2,7 @@
 
 ##環境構築
 Dockerビルド
-    1.git clone git@github.com:Estra-Coachtech/laravel-docker-template.git
+    1.git clone git@github.com:yminamo5-code/test1_otoiawaseform.git
     2.docker compose up -d --build
 
 Laravelのパッケージのインストール環境構築
@@ -13,7 +13,8 @@ Laravelのパッケージのインストール環境構築
         DB_USERNAME=laravel_user
         DB_PASSWORD=laravel_pass
     4.php artisan key:generate
-    5.php artisan make:migration create_contacts_table
+    5.php artisan migrate
+    6.php artisan db:seed
 
 ##使用技術（実行環境）
     Laravel Framework 8.83.8
@@ -30,10 +31,11 @@ Laravelのパッケージのインストール環境構築
 
 ##ER図
     ![ER図](./test1_er.png)
-
+    作成ツール: draw.io (diagrams.net)
 
 
 
 ##URL
-    開発環境：http://localhost/
+    お問い合わせフォーム：http://localhost/
+    ユーザー登録：http://localhost/register
     phpMyAdmin:http://localhost:8080/

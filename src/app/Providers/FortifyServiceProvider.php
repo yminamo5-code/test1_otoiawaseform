@@ -15,6 +15,12 @@ use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
+use Laravel\Fortify\Contracts\LogoutResponse as LogoutResponseContract;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use App\Http\Requests\LoginRequest;
+use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -48,11 +54,44 @@ class FortifyServiceProvider extends ServiceProvider
             }
         });
 
+        Fortify::authenticateUsing(function (Request $request) {
+
+            Fortify::ignoreRoutes();
+
+            $loginRequest = new \App\Http\Requests\LoginRequest();
+            $validator = \Validator::make($request->all(),                 [
+                    'email' => ['required', 'email'],
+                    'password' => ['required'],
+                ],
+                [
+                    'email.required' => 'メールアドレスを入力してください',
+                    'email.email' => 'メールアドレスは「ユーザー名＠ドメイン」形式で入力してください',
+                    'password.required' => 'パスワードを入力してください',
+                ]
+            );
+            $validator->validate();
+
+            $user = User::where('email', $request->email)->first();
+
+            if ($user && Hash::check($request->password, $user->password)) {
+                return $user;
+            }
+
+            return null;
+        });
+
         $this->app->instance(RegisterResponseContract::class, new class implements RegisterResponseContract {
             public function toResponse($request)
             {
                 Auth::login($request->user());
                 return redirect('/admin');
+            }
+        });
+
+        $this->app->instance(LogoutResponseContract::class, new class implements LogoutResponseContract {
+            public function toResponse($request)
+            {
+                return redirect('/login');
             }
         });
 

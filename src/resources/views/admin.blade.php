@@ -5,7 +5,10 @@
 @endsection
 
 @section('header-button')
-    <a href="/login" class="login_button">logout</a>
+    <form method="POST" action="{{route('logout')}}">
+        @csrf
+        <button type="submit" class="logout_button">logout</button>
+    </form>
 @endsection
 
 @section('content')
@@ -31,10 +34,14 @@
         <button type="submit" class="search">検索</button>
         <a href="{{ route('contacts.admin') }}" class="reset">リセット</a>
     </form>
-    <div class="special_button">
-        <button type="submit" class="export">エクスポート</button>
-        <div class="pagenation">{{ $contacts->links('vendor.pagination.numbers') }}</div>
-    </div>
+    <form method="GET" action="{{ route('contacts.export') }}" class="special_button">
+        <input type="hidden" name="name_email" value="{{ request('name_email') }}">
+        <input type="hidden" name="gender" value="{{ request('gender') }}">
+        <input type="hidden" name="category_id" value="{{ request('category_id') }}">
+        <input type="hidden" name="date" value="{{ request('date') }}">
+            <button type="submit" class="export">エクスポート</button>
+            <div class="pagenation">{{ $contacts->links('vendor.pagination.numbers') }}</div>
+    </form>
 
     <table>
         <tr class="title">
@@ -52,27 +59,36 @@
             <td>{{ $contact->email }}</td>
             <td>{{ $contact->category->name ?? '不明' }}</td>
             <td>
-                <button class="show" data-id="{{ $contact->id }}">詳細</button>
+                <label for="modal-toggle-{{ $contact->id }}" class="show">詳細</label>
             </td>
         </tr>
         @endforeach
     </tbody>
-</table>
 
-{{-- 
-    <div id="detailModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <p><strong>お名前</strong> <span id="modal-name"></span></p>
-            <p><strong>性別</strong> <span id="modal-gender"></span></p>
-            <p><strong>メールアドレス</strong> <span id="modal-email"></span></p>
-            <p><strong>電話番号</strong> <span id="modal-tel"></span></p>
-            <p><strong>住所</strong> <span id="modal-address"></span></p>
-            <p><strong>建物名</strong> <span id="modal-build"></span></p>
-            <p><strong>お問い合わせの種類</strong> <span id="modal-category"></span></p>
-            <p><strong>お問い合わせ内容:</strong> <span id="modal-detail"></span></p>
-            <button class="delete" >削除</button>
-        </div>
+        @foreach($contacts as $contact)
+<input type="checkbox" id="modal-toggle-{{ $contact->id }}" class="modal-toggle" hidden>
+
+<div class="modal">
+    <label for="modal-toggle-{{ $contact->id }}" class="modal-overlay"></label>
+    <div class="modal-content">
+        <label for="modal-toggle-{{ $contact->id }}" class="close">&times;</label>
+
+        <p><strong>お名前</strong> {{ $contact->last_name }} {{ $contact->first_name }}</p>
+        <p><strong>性別</strong> {{ $contact->gender == 1 ? '男性' : ($contact->gender == 2 ? '女性' : 'その他') }}</p>
+        <p><strong>メール</strong> {{ $contact->email }}</p>
+        <p><strong>電話</strong> {{ $contact->tel }}</p>
+        <p><strong>住所</strong> {{ $contact->address }}</p>
+        <p><strong>建物名</strong> {{ $contact->building_name }}</p>
+        <p><strong>お問い合わせの種類</strong> {{ $contact->category->name ?? '不明' }}</p>
+        <p><strong>お問い合わせ内容</strong> {{ $contact->detail }}</p>
+
+        <form method="POST" action="{{ route('contacts.destroy', $contact->id) }}">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="delete">削除</button>
+        </form>
     </div>
---}}
+</div>
+@endforeach
+
 @endsection

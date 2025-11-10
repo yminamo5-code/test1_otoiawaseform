@@ -52,9 +52,8 @@ class ContactController extends Controller
                 'detail' => $contact['content'],
                 'category_id' => $contact['category_id'],
             ]);
+            $request->session()->forget('contact_input');
             return view('thanks');
-
-
         }
 
     public function admin(Request $request)

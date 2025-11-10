@@ -30,7 +30,7 @@
     <div class=label>
       <div class=label_item>メールアドレス</div>
         <span class=form_group>
-          <input type="email" name="email" value="{{ old('email')}}" placeholder="　例：test@example.com"/>  
+          <input type="text" name="email" value="{{ old('email')}}" placeholder="　例：test@example.com"/>  
         </span>
     </div>
         <div class="form_error">

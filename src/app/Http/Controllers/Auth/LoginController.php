@@ -25,10 +25,6 @@ class LoginController extends Controller
             $request->session()->regenerate();
             return redirect()->intended('/admin');
         }
-
-        return back()->withErrors([
-            'email' => 'メールアドレスまたはパスワードが間違っています。',
-        ])->onlyInput('email');
     }
 
     // ログアウト処理
